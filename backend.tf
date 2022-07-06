@@ -1,6 +1,6 @@
 terraform {
   backend "s3" {
-    bucket      = "jenkins-gogreen"
+    bucket      = "terraform-backend-leyla"
     key         = "NewRepo/tfstate.tf"
     region      = "us-east-1"
     encrypt     = true
