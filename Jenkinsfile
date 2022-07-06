@@ -29,34 +29,73 @@
 //         }
 //     }
 // }
+// pipeline {
+//     agent any
+//     tools {
+//         terraform 'terraform'
+//     }
+//     stages {
+//         stage('Git init') {
+//             steps {
+//                 git credentialsId: 'your_token', url: 'https://github.com/777leyla/NewRepo.git'
+//             }
+//         }
+//         stage('Terraform init') {
+//             steps {
+//                 sh 'terraform init -no-color'
+//             }
+//         }
+//         stage('Terraform plan') {
+//             steps {
+//                 sh 'terraform plan -destroy -no-color'
+//             }
+//         }
+//         stage('Terraform Destroy') {
+//             input {
+//                 message "Do you want to destroy deployment?"
+//             }
+//             steps {
+//                 sh 'terraform destroy --auto-approve -no-color'
+//             }
+//         }
+//     }
+// }
+
+
 pipeline {
     agent any
-    tools {
-        terraform 'terraform'
-    }
     stages {
-        stage('Git init') {
+        stage('Build') {
             steps {
-                git credentialsId: 'your_token', url: 'https://github.com/777leyla/NewRepo.git'
+                sh '''
+                echo "Planning infrastructure"
+                cd terraform
+                terraform init
+                terraform plan
+                '''
             }
         }
-        stage('Terraform init') {
-            steps {
-                sh 'terraform init -no-color'
-            }
+    stage('Deploy') {
+        steps {
+            sh '''
+            echo "Deploying infrustructure..."
+            cd terraform
+            terraform apply -auto-approve
+            '''
         }
-        stage('Terraform plan') {
-            steps {
-                sh 'terraform plan -destroy -no-color'
-            }
+    }
+    stage('finish') {
+        steps {
+            sh '''
+            echo "pipeline finished"
+            '''
+        
         }
-        stage('Terraform Destroy') {
-            input {
-                message "Do you want to destroy deployment?"
-            }
-            steps {
-                sh 'terraform destroy --auto-approve -no-color'
-            }
+    }
+    }
+    post {
+        always {
+            deleteDir{}
         }
     }
 }
