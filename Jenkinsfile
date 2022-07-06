@@ -61,41 +61,36 @@
 //     }
 // }
 
-
 pipeline {
     agent any
     stages {
         stage('Build') {
             steps {
-                sh '''
-                echo "Planning infrastructure"
-                cd terraform
-                terraform init
-                terraform plan
-                '''
+              sh '''
+              echo "Planning infrastructure"
+              terraform init
+              '''
             }
         }
     stage('Deploy') {
         steps {
             sh '''
-            echo "Deploying infrustructure..."
-            cd terraform
+            echo "Deploying infrastructure..."
             terraform apply -auto-approve
             '''
+            }
         }
-    }
     stage('finish') {
         steps {
             sh '''
-            echo "pipeline finished"
+           echo "pipeline finished"
             '''
-        
+            }
         }
-    }
     }
     post {
-        always {
-            deleteDir{}
-        }
+      always {
+        deleteDir()
+      }
     }
 }
