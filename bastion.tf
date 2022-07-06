@@ -10,10 +10,10 @@ resource "aws_instance" "bastion" {
     "Name" = "Bastion-EC2"
   }
 }
-resource "aws_eip" "bastion" {
-  instance = aws_instance.bastion.id
-  vpc      = true
-}
+# resource "aws_eip" "bastion" {
+#   instance = aws_instance.bastion.id
+#   vpc      = true
+# }
 
 
 resource "aws_security_group" "bastion" {

@@ -47,15 +47,13 @@ resource "aws_security_group" "elb_http" {
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
-
-   ingress {
-    description = "SSH"
-    cidr_blocks = ["0.0.0.0/0"]
-    #security_groups = [aws_security_group.bastion.id]
+ ingress {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
   }
+
   ingress {
     description = "HTTPS"
     cidr_blocks = ["0.0.0.0/0"]
@@ -74,3 +72,4 @@ resource "aws_security_group" "elb_http" {
     Name = "Allow HTTP through ELB Security Group"
   }
 }
+
