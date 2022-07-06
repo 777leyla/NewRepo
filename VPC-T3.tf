@@ -2,96 +2,16 @@
 
 # Create VPC
 resource "aws_vpc" "main" {
-  cidr_block = "10.0.0.0/16"
+  cidr_block = "30.0.0.0/16"
   tags = {
     Name = "Vpc-Insurance"
   }
 }
-# resource "aws_network_acl" "default" {
-#   vpc_id = aws_vpc.main.id
 
-#   # ingress {
-#   #   protocol   = -1
-#   #   rule_no    = 100
-#   #   action     = "allow"
-#   #   cidr_block = "0.0.0.0/0"
-#   #   from_port  = 0
-#   #   to_port    = 0
-#   # }
-#    ingress {
-#     protocol   = -1
-#     rule_no    = 99
-#     action     = "allow"
-#     cidr_block = "0.0.0.0/0"
-#     from_port  = 0
-#     to_port    = 0
-#   }
-#   ingress {
-#     protocol   = "tcp"
-#     rule_no    = 100
-#     action     = "allow"
-#     cidr_block = "10.0.0.0/16"
-#     from_port  = 80
-#     to_port    = 80
-#   }
-
-#   ingress {
-#     protocol   = "tcp"
-#     rule_no    = 200
-#     action     = "allow"
-#     cidr_block = "10.0.0.0/16"
-#     from_port  = 3306
-#     to_port    = 3306
-#   }
-
-#     ingress {
-#     protocol   = "tcp"
-#     rule_no    = 300
-#     action     = "allow"
-#     cidr_block = "10.0.0.0/16"
-#     from_port  = 22
-#     to_port    = 22
-#   }
-
-#     ingress {
-#     protocol   = "icmp"
-#     rule_no    = 400
-#     action     = "allow"
-#     cidr_block = "0.0.0.0/0"
-#     from_port  = 0
-#     to_port    = 0
-#   }
-
-#     ingress {
-#     protocol   = "tcp"
-#     rule_no    = 500
-#     action     = "allow"
-#     cidr_block = "0.0.0.0/0"
-#     from_port  = 32768
-#     to_port    = 65535
-#   }
-
-#   egress {
-#     protocol   = -1
-#     rule_no    = 100
-#     action     = "allow"
-#     cidr_block = "0.0.0.0/0"
-#     from_port  = 0
-#     to_port    = 0
-#   }
-#     egress {
-#     protocol   = -1
-#     rule_no    = 99
-#     action     = "allow"
-#     cidr_block = "0.0.0.0/0"
-#     from_port  = 0
-#     to_port    = 0
-#   }
-# }
 # Create Public Subnet
 resource "aws_subnet" "public_subnet1a" {
   vpc_id            = aws_vpc.main.id
-  cidr_block        = "10.0.1.0/24"
+  cidr_block        = "30.0.1.0/24"
   availability_zone = "us-east-1a"
   tags = {
     Name = "Public-Subnet1"
@@ -100,7 +20,7 @@ resource "aws_subnet" "public_subnet1a" {
 # Create Public Subnet
 resource "aws_subnet" "public_subnet2b" {
   vpc_id            = aws_vpc.main.id
-  cidr_block        = "10.0.2.0/24"
+  cidr_block        = "30.0.2.0/24"
   availability_zone = "us-east-1b"
   tags = {
     Name = "Public-Subnet2"
@@ -110,7 +30,7 @@ resource "aws_subnet" "public_subnet2b" {
 # Create Private Subnet
 resource "aws_subnet" "private_subnet1a" {
   vpc_id            = aws_vpc.main.id
-  cidr_block        = "10.0.3.0/24"
+  cidr_block        = "30.0.3.0/24"
   availability_zone = "us-east-1a"
   tags = {
     Name = "Private-Subnet1"
@@ -119,7 +39,7 @@ resource "aws_subnet" "private_subnet1a" {
 # Create Private Subnet
 resource "aws_subnet" "private_subnet1b" {
   vpc_id            = aws_vpc.main.id
-  cidr_block        = "10.0.4.0/24"
+  cidr_block        = "30.0.4.0/24"
   availability_zone = "us-east-1b"
   tags = {
     Name = "Private-Subnet2"
@@ -128,7 +48,7 @@ resource "aws_subnet" "private_subnet1b" {
 # Create Private Subnet
 resource "aws_subnet" "private_subnet2a" {
   vpc_id            = aws_vpc.main.id
-  cidr_block        = "10.0.5.0/24"
+  cidr_block        = "30.0.5.0/24"
   availability_zone = "us-east-1a"
   tags = {
     Name = "Private-Subnet3"
@@ -137,7 +57,7 @@ resource "aws_subnet" "private_subnet2a" {
 # Create Private Subnet
 resource "aws_subnet" "private_subnet2b" {
   vpc_id            = aws_vpc.main.id
-  cidr_block        = "10.0.6.0/24"
+  cidr_block        = "30.0.6.0/24"
   availability_zone = "us-east-1b"
   tags = {
     Name = "Private-Subnet4"
@@ -221,9 +141,19 @@ resource "aws_route_table" "private_route_table1" {
     Name = "Private-route-Table1"
   }
 }
+# Creating Private Route Table
+resource "aws_route_table" "private_route_table2" {
+  vpc_id = aws_vpc.main.id
 
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_nat_gateway.nat_gateway1.id
 
-
+  }
+  tags = {
+    Name = "Private-route-Table2"
+  }
+}
 
 # Route Table association with Public Subnet
 resource "aws_route_table_association" "public1" {
@@ -235,7 +165,6 @@ resource "aws_route_table_association" "public2" {
   subnet_id      = aws_subnet.public_subnet2b.id
   route_table_id = aws_route_table.public_route_table.id
 }
-
 
 # Route Table association with Private Subnet
 resource "aws_route_table_association" "private1" {
@@ -258,6 +187,16 @@ resource "aws_route_table_association" "private4" {
   route_table_id = aws_route_table.private_route_table.id
 }
 
+# # Route Table association with Private Subnet
+# resource "aws_route_table_association" "private5" {
+#   subnet_id      = aws_subnet.private_subnet3a.id
+#   route_table_id = aws_route_table.private_route_table2.id
+# }
+# # Route Table association with Private Subnet
+# resource "aws_route_table_association" "private6" {
+#   subnet_id      = aws_subnet.private_subnet3b.id
+#   route_table_id = aws_route_table.private_route_table2.id
+# }
 # resource "aws_network_acl_association" "main" {
 #   network_acl_id = aws_network_acl.default.id
 #   subnet_id      = aws_subnet.public_subnet1a.id
