@@ -72,4 +72,3 @@ resource "aws_security_group" "elb_http" {
     Name = "Allow HTTP through ELB Security Group"
   }
 }
-
